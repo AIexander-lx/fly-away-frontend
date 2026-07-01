@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
-import type { Booking } from '../types';
+import type { Booking, Flight } from '../types';
 import { getBookingIds } from '../auth';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString();
 }
 
+interface BookingRow extends Booking {
+  airlineName: string;
+}
+
 export default function MyBookings() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,12 +22,24 @@ export default function MyBookings() {
       setLoading(false);
       return;
     }
-    Promise.allSettled(ids.map((id) => api.get<Booking>(`/flights/book/${id}`))).then((results) => {
-      const loaded: Booking[] = [];
+    Promise.allSettled(ids.map((id) => api.get<Booking>(`/flights/book/${id}`))).then(async (results) => {
+      const loadedBookings: Booking[] = [];
       for (const result of results) {
-        if (result.status === 'fulfilled') loaded.push(result.value.data);
+        if (result.status === 'fulfilled') loadedBookings.push(result.value.data);
       }
-      setBookings(loaded);
+
+      const withAirline = await Promise.all(
+        loadedBookings.map(async (booking) => {
+          try {
+            const flight = await api.get<Flight>(`/flights/${booking.flightId}`);
+            return { ...booking, airlineName: flight.data.airlineName };
+          } catch {
+            return { ...booking, airlineName: '—' };
+          }
+        })
+      );
+
+      setBookings(withAirline);
       setLoading(false);
     });
   }, []);
@@ -38,6 +54,7 @@ export default function MyBookings() {
           <thead>
             <tr>
               <th>Número</th>
+              <th>Aerolínea</th>
               <th>Salida</th>
               <th></th>
             </tr>
@@ -46,6 +63,7 @@ export default function MyBookings() {
             {bookings.map((booking) => (
               <tr key={booking.id}>
                 <td>{booking.flightNumber}</td>
+                <td>{booking.airlineName}</td>
                 <td>{formatDate(booking.estDepartureTime)}</td>
                 <td>
                   <Link to={`/bookings/${booking.id}`}>Ver detalle</Link>
