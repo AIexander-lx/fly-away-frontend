@@ -22,6 +22,8 @@ Frontend en React + TypeScript para el sistema de reserva de vuelos Fly Away (CS
    ```
    Se abre en `http://localhost:5173`.
 
+> **Nota:** el backend usa una base de datos en memoria (H2). Cada vez que se reinicia, se borran los usuarios y vuelos — hay que registrar un usuario nuevo antes de poder loguearse.
+
 ## Variables de entorno
 
 | Variable | Descripción | Valor por defecto |
@@ -45,10 +47,13 @@ El navegador nunca llama directo a `localhost:8080`. Las llamadas van a `/api/..
 
 ```
 src/
-├── api.ts               # instancia de axios + interceptor de auth
-├── auth.ts               # helpers de token y booking ids en localStorage
-├── context/AuthContext   # estado del usuario autenticado
-├── components/           # Navbar, ProtectedRoute
-├── pages/                 # Register, Login, Search, MyBookings, BookingDetail
-└── types.ts               # tipos compartidos con el backend
+├── api.ts                    # instancia de axios + interceptor de auth
+├── auth.ts                   # helpers de token y booking ids en localStorage
+├── context/
+│   ├── authContextValue.ts   # tipo y contexto de React
+│   ├── AuthContext.tsx       # AuthProvider (estado del usuario autenticado)
+│   └── useAuth.ts            # hook de acceso al contexto
+├── components/                # Navbar, ProtectedRoute
+├── pages/                      # Register, Login, Search, MyBookings, BookingDetail
+└── types.ts                    # tipos compartidos con el backend
 ```
