@@ -2,14 +2,13 @@ import { useState, type FormEvent } from 'react';
 import api, { getErrorMessage } from '../api';
 import type { Flight, FlightSearchResponse } from '../types';
 import { addBookingId, isAuthenticated } from '../auth';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString();
 }
 
 export default function Search() {
-  const navigate = useNavigate();
   const [flightNumber, setFlightNumber] = useState('');
   const [airlineName, setAirlineName] = useState('');
   const [departureFrom, setDepartureFrom] = useState('');
@@ -41,11 +40,6 @@ export default function Search() {
 
   async function handleBook(flightId: number) {
     setBookingMessage(null);
-
-    if (!isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
 
     try {
       const res = await api.post<{ id: number }>('/flights/book', { flightId });
@@ -113,7 +107,11 @@ export default function Search() {
                 <td>{formatDate(flight.estArrivalTime)}</td>
                 <td>{flight.availableSeats}</td>
                 <td>
-                  <button onClick={() => handleBook(flight.id)}>Reservar</button>
+                  {isAuthenticated() ? (
+                    <button onClick={() => handleBook(flight.id)}>Reservar</button>
+                  ) : (
+                    <Link to="/login">Inicia sesión para reservar</Link>
+                  )}
                 </td>
               </tr>
             ))}
