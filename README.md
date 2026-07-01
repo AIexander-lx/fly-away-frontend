@@ -26,7 +26,11 @@ Frontend en React + TypeScript para el sistema de reserva de vuelos Fly Away (CS
 
 | Variable | Descripción | Valor por defecto |
 |----------|-------------|--------------------|
-| `VITE_API_URL` | Base URL del backend | `http://localhost:8080` |
+| `VITE_API_URL` | Dirección real del backend (usada por el proxy de Vite, no por el navegador) | `http://localhost:8080` |
+
+## Sobre el proxy (evita problemas de CORS)
+
+El navegador nunca llama directo a `localhost:8080`. Las llamadas van a `/api/...` (mismo origen que el frontend) y `vite.config.ts` las reenvía al backend definido en `VITE_API_URL`. Esto evita que la app dependa de que el backend tenga CORS configurado correctamente.
 
 ## Funcionalidades
 
