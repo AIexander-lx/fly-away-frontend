@@ -1,15 +1,3 @@
-export interface RegisterRequest {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
 export interface CurrentUser {
   id: number;
   username: string;
