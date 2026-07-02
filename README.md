@@ -32,7 +32,9 @@ Frontend en React + TypeScript para el sistema de reserva de vuelos Fly Away (CS
 
 ## Sobre el proxy (evita problemas de CORS)
 
-El navegador nunca llama directo a `localhost:8080`. Las llamadas van a `/api/...` (mismo origen que el frontend) y `vite.config.ts` las reenvía al backend definido en `VITE_API_URL`. Esto evita que la app dependa de que el backend tenga CORS configurado correctamente.
+El backend del laboratorio **no tiene CORS configurado** (no hay ningún bean `CorsConfigurationSource` ni `.cors(...)` en `Configuration.java`), aunque su documentación afirma que las solicitudes desde `localhost:5173` "funcionarán sin problemas". En la práctica, el navegador bloquea esas solicitudes.
+
+Para no depender de ese fix en el backend (que no forma parte de este repo), el navegador nunca llama directo a `localhost:8080`. Las llamadas van a `/api/...` (mismo origen que el frontend) y `vite.config.ts` las reenvía al backend definido en `VITE_API_URL`. Al ser una petición servidor-a-servidor y no navegador-a-servidor, CORS no aplica — la app funciona igual sin importar si el backend tiene CORS configurado o no.
 
 ## Funcionalidades
 
