@@ -1,6 +1,6 @@
 # Fly Away Frontend
 
-Frontend en React + TypeScript para el sistema de reserva de vuelos Fly Away (CS2031 - Semana 14).
+Frontend en React + TypeScript para el sistema de reserva de vuelos Fly Away.
 
 ## Cómo correrlo
 
